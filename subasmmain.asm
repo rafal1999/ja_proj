@@ -1,5 +1,5 @@
 CPU x64
-
+DEFAULT REL 
 extern printf
 
 
@@ -19,7 +19,7 @@ m:
 	mov rdi, formats 
 	mov rsi, msg
 	xor rax, rax
-	call printf 
+	call printf wrt ..plt;
 
 	pop rbp
 	xor eax, eax

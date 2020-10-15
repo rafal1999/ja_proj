@@ -1,0 +1,7 @@
+
+  nasm -f elf${mode}  ${fname}.asm
+gcc -m64 -shared -fPIC -o dupa.so lib64.o
+gcc -m64 -c cdynamic.c 
+gcc -m64 -L. -l:lib.so  -I. -o cdynamic cdynamic.o -ldl 
+export LD_LIBRARY_PATH=$LC_LIBRARY_PATH:./
+./cdynamic
