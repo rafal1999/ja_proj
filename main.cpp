@@ -1,14 +1,15 @@
 #include <iostream>
 #include <fstream>
- #include <dlfcn.h>
+#include <dlfcn.h>
 
 
- unsigned char header[54];
-
+unsigned char header[54];
+char tabOfchars[]={' ','*','|','=','@'};//na razie 5 znaków 
 unsigned char * readBMP(const char * filname);
 
 int main()
 {
+  int txtImageWidht=100;
   // int (*m)();
   // void* handle = dlopen("libC.so", RTLD_LAZY);
   // //double * p= new double(2.2);
@@ -19,19 +20,34 @@ int main()
   // }
   unsigned char *pImage; 
   unsigned char *p; 
-  pImage=readBMP("dwanadwa.bmp");
+  pImage=readBMP("jeden .bmp");
   p=pImage;
   std::cout<<"p="<<(unsigned int)*p<<std::endl;
-  
-  for(int i=0;i<15;i++)
+  unsigned char **t=nullptr;
+  t=new  unsigned char* [4];
+  unsigned char * pStart=p;
+  *t=p;
+  t++;
+  *t=p+(4*3);
+  t++;
+  *t=p+(8*3);
+
+  t++;
+  *t=p+(12*3);
+  t-=4;
+  t+=3;
+  *t+=3*2+6;//poruszasz się po ala 2 d tab
+  for(int i=0;i<12*4;i++)
   {
-    printf("%i\n",*p);
+    printf("%d-%i\n",i,*p);
     p++;
   }
-  FILE *pF = fopen("d.bmp","wb");
-  
+  for(int i=0;i<12;i++);
+
+ printf("eeee%i",**t);
+  FILE *pF = fopen("d.bmp","w");
   fwrite(header,sizeof(unsigned char),54,pF);
-  fwrite(pImage,sizeof(unsigned char),16,pF);
+  fwrite(pImage,sizeof(unsigned char),12*4,pF);
   fclose(pF);
   delete [] pImage;
   return 0;
