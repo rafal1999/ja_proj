@@ -7,7 +7,7 @@ unsigned char header[54];
 char tabOfchars[]={' ','*','|','=','@'};//na razie 5 znaków 
 unsigned char * readBMP(const char * filname);
 
-int main()
+int main(int argc, char ** argv)
 {
   int txtImageWidht=100;
   // int (*m)();
@@ -22,10 +22,11 @@ int main()
   unsigned char *p; 
   pImage=readBMP("jeden .bmp");
   p=pImage;
-  std::cout<<"p="<<(unsigned int)*p<<std::endl;
+  std::cout<<"p=ddd"<<(unsigned int)*p<<std::endl;
   unsigned char **t=nullptr;
-  t=new  unsigned char* [4];
-  unsigned char * pStart=p;
+  t=new  unsigned char* [4];//ilość komórek  wsk bedze zależna od ilości wątków 
+  unsigned char ** pStartT = t;
+
   *t=p;
   t++;
   *t=p+(4*3);
@@ -34,8 +35,7 @@ int main()
 
   t++;
   *t=p+(12*3);
-  t-=4;
-  t+=3;
+  t-=3;
   *t+=3*2+6;//poruszasz się po ala 2 d tab
   for(int i=0;i<12*4;i++)
   {
@@ -50,6 +50,7 @@ int main()
   fwrite(pImage,sizeof(unsigned char),12*4,pF);
   fclose(pF);
   delete [] pImage;
+  delete [] pStartT;
   return 0;
 }
 
