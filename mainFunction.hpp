@@ -1,3 +1,4 @@
+/** @file */
 #ifndef MAINFUNCTION_H_
 #define MAINFUNCTION_H_
 

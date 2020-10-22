@@ -40,8 +40,13 @@ subasmmain.o : subasmmain.asm
 clean :
 	for f in `ls *.o` `ls *.so`; do  if [ -f $$f ] ; then rm $$f  ; fi;   done;
 	if [ -f main ] ; then rm main ; fi ;
-	if [ -d html ] ; then rm -r html; fi ;
-	
+	if [ -d documentation ] ; then rm -r documentation; fi ; 
+d : doxy
+	firefox documentation/html/index.html
+
+doxy :
+	doxygen Doxyfile
+
 
 
 

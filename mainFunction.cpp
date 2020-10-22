@@ -1,3 +1,4 @@
+/** @file */
 #include "mainFunction.hpp"
 
 unsigned char * readBmp(const char * _filname,unsigned int & _w,unsigned int &  _h)

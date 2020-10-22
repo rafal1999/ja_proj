@@ -1,3 +1,4 @@
+/** @file */
 #include <iostream>
 #include <fstream>
 #include <cstdio>
@@ -5,31 +6,6 @@
 #include <cmath>
 
 #include "mainFunction.hpp"
-// void convertPixToTabOfVal(unsigned char ** _pPix,unsigned int **_tabVal,const unsigned int  _w,const unsigned int  _h) 
-// {
-
-//   // printf("%i",*_pPix);
-//   for(int i=0;i<4;i++)
-//   {
-//     for(int j=0;j<3;j++)
-//     {
-//       _tabVal[i][j]=**_pPix;
-//       //  _pPix++;
-//       _tabVal[i][j]+=**_pPix;
-//       // *_pPix++;
-//       _tabVal[i][j]+=**_pPix;
-//       // *_pPix++;
-//     }
-//     break;
-//   }
-//   _pPix++;  
-//   for(int j=0;j<4;j++)
-//     {
-//       printf("aa %i\n",_tabVal[0][j]);
-//     }
-//   return;
-// }
-
 //  -i input 
 //  -o output 
 //  -c bilioteka c
