@@ -10,8 +10,7 @@ unsigned char * readBmp(const char * _filname,unsigned int & _w,unsigned int &  
     std::cout<<"bład w otwieraniu pliku:"<<_filname<<std::endl;
     return nullptr;
   }
-  // unsigned char header[54];
-  fread(header,sizeof(unsigned char),54,pF);
+   fread(header,sizeof(unsigned char),54,pF);
   _w = *(int*)&header[18];
   _h = *(int*)&header[22];
 
@@ -28,26 +27,35 @@ unsigned char * readBmp(const char * _filname,unsigned int & _w,unsigned int &  
     fclose(pF);
   return pP;
 }
-//TODO zrobic zapisa do pliku a nie na terminal 
+/**
+* @todo zrobic zapisa do pliku a nie na terminal 
+*/
 void writeTxt(unsigned int **tab,const unsigned int & _w,const unsigned int &  _h)
 {
   // c
   FILE *pF = fopen("txt","w");
    for(int i=(_h-1);i>-1;i--)
   {
+		fprintf(pF,";");
     for(int j=0;j<_w/3;j++)
     {
-			printf("%c",returnChar(tab[i][j]));
+			fprintf(pF,"%c",returnChar(tab[i][j]));
     }
-    printf("\n");
+    fprintf(pF,";\n");
   }
-  (pF,"%i",tab[0][0]);
   fclose(pF);
 }
 char returnChar(const unsigned int _v)
 {
-  char tabOfchars[]={' ','*','|','=','@'};//na razie 5 znaków 
   if  (_v<=(255) && _v>=(240))	{return ' ';}
+  if  (_v<(240) && _v>=(220))		{return '\'';}
+	if	(_v<(220) && _v>=(200))		{return '*';}
+	if	(_v<(200) && _v>=(180))		{return '-';}
+	if	(_v<(180) && _v>=(160))		{return '+';}
+	if	(_v<(160) && _v>=(140))		{return '|';}
+	if	(_v<(120) && _v>=(100))		{return '%';}
+	if	(_v<(100) && _v>=(80))		{return '$';}
+	if	(_v<(80) && _v>=(40))			{return '@';}
   else 													{return '#';} 
   return 0; //tymaczasowo
 }
