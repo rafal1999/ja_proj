@@ -39,7 +39,7 @@ unsigned char * readBmp(const char * filename, unsigned int & _w,unsigned int & 
  * @param [in,out] _h wysokośc bitmapy 
  * @return Nic. 
  */
-void writeTxt(unsigned int **tab,const unsigned int & _w,const unsigned int &  _h,const char * _filename);
+void writeTxt(unsigned int **tab,const unsigned int & _w,const unsigned int &  _h,const char * _filename,const int & _scale);
 /** zwraca znak, któremu jest przypisana wartość liczbowa  
  * @param  _v Wartość, która decyduje jaki znak zostanie zwrócony 
  * @return Znak, który symbolizuje obszar pikseli (obszar może się składać z jednego piksela)

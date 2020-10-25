@@ -78,14 +78,14 @@ unsigned char * readBmp(const char * _filename,unsigned int & _w,unsigned int & 
   return pP;
 }
 
-void writeTxt(unsigned int **tab,const unsigned int & _w,const unsigned int &  _h,const char * _filename)
+void writeTxt(unsigned int **tab,const unsigned int & _w,const unsigned int &  _h,const char * _filename,const int & _scale)
 {
   // c
   FILE *pF = fopen(_filename,"w");
    for(int i=(_h-1);i>-1;i--)
   {
 		fprintf(pF,";");
-    for(int j=0;j<_w/3;j++)
+    for(int j=0;j<_w/(3*_scale);j++)
     {
 			fprintf(pF,"%c",returnChar(tab[i][j]));
     }

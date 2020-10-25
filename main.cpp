@@ -35,7 +35,7 @@ int main(int argc, char ** argv)
   //   std::cout<<"parmaetry"<<inFileName<<outFileName<<scale<<std::endl;
   //   return 1;
   // }
-  std::cout<<"parmaetry"<<inFileName<<outFileName<<scale<<int(lM)<<std::endl;
+  // std::cout<<"parmaetry"<<inFileName<<outFileName<<scale<<int(lM)<<std::endl;
   pImage=readBmp("bitmapy/kaczor.bmp",width,height);
   if(pImage==nullptr) 
   {
@@ -85,7 +85,7 @@ int main(int argc, char ** argv)
   //   printf("\n");
   // }
 }
-  void (*test)(unsigned char **,unsigned int **,const unsigned int  ,const unsigned int  );
+  void (*test)(unsigned char **,unsigned int **,const unsigned int  ,const unsigned int,const int   );
    void* handle = dlopen("./libC.so", RTLD_LAZY); 
   printf("+++++++\n"); 
   if (!handle)
@@ -95,10 +95,10 @@ int main(int argc, char ** argv)
     return 1;
   }
  
-  test=(void (*)(unsigned char **,unsigned int **,const unsigned int  ,const unsigned int ))dlsym(handle,"convertPixToTabOfVal");
-  (*test)(pStartT,tab,width,height);
+  test=(void (*)(unsigned char **,unsigned int **,const unsigned int  ,const unsigned int,const int ))dlsym(handle,"convertPixToTabOfVal");
+  (*test)(pStartT,tab,width,height,scale);
   dlclose(handle);
-  writeTxt(tab,width,height,"txt"); //todo 
+  writeTxt(tab,width,height,"txt",scale); //todo 
   { //zwalnianie pamięci 
   delete [] pImage;
   delete [] pStartT;
