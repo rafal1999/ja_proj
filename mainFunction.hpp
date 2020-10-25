@@ -27,7 +27,7 @@ bool readParams(const int _argc, char ** _argv,std::string &  _inFileName,std::s
  * @param _h wysokośc bitmapy 
  * @return zaalokowana tablica 2D i wyzerowana 
  */
-unsigned int ** returnTabVal(const unsigned int _w,const unsigned int _h);
+unsigned int ** returnTabVal(const unsigned int _w,const unsigned int _h,const int & _scale);
 /** zwraca wsk tablice 1D BGR 
  * @param [in,out] _w szerokość bitmapy (w bajtach) (już wyrównanej)
  * @param [in,out] _h wysokośc bitmapy 

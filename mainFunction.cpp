@@ -106,17 +106,17 @@ char returnChar(const unsigned int _v)
 	if	(_v<(80) && _v>=(40))			{return '@';}
   return '#'; 
 }
-unsigned int ** returnTabVal(const unsigned int _w,const unsigned int _h)
+unsigned int ** returnTabVal(const unsigned int _w,const unsigned int _h,const int &_scale)
 {
   unsigned int ** tab;
   tab=new unsigned int *[_h];
   for(int i=0;i<_h;i++)
   {
-  	tab[i]=new unsigned int [_w/3];
+  	tab[i]=new unsigned int [_w/(3*_scale)];
   }
 		for(int i=0;i<_h;i++)
 	{
-		for(int j=0;j<(_w/3);j++)//bardzo ważne dzielnie przez 3 możew w przyszłosci przez 6 9 ... zaleznie ile pikseli bedę chciał połknąć 
+		for(int j=0;j<(_w/(3*_scale));j++)//bardzo ważne dzielnie przez 3 możew w przyszłosci przez 6 9 ... zaleznie ile pikseli bedę chciał połknąć 
     {	
 			 tab[i][j]=0;
     }

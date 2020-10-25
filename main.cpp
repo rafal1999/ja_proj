@@ -29,12 +29,12 @@ int main(int argc, char ** argv)
   int scale =1;
   libMode lM;
   printf("\n\n-----\n");
-  if(!readParams(argc,argv,inFileName,outFileName,lM,scale))
-  {
-    std::cout<<"błędne parametry"<<std::endl;
-    std::cout<<"parmaetry"<<inFileName<<outFileName<<scale<<std::endl;
-    return 1;
-  }
+  // if(!readParams(argc,argv,inFileName,outFileName,lM,scale))
+  // {
+  //   std::cout<<"błędne parametry"<<std::endl;
+  //   std::cout<<"parmaetry"<<inFileName<<outFileName<<scale<<std::endl;
+  //   return 1;
+  // }
   std::cout<<"parmaetry"<<inFileName<<outFileName<<scale<<int(lM)<<std::endl;
   pImage=readBmp("bitmapy/kaczor.bmp",width,height);
   if(pImage==nullptr) 
@@ -42,9 +42,8 @@ int main(int argc, char ** argv)
     return 1;
   }
   std::cout<<std::endl<<width<<"--"<<height<<std::endl;
-	tab=returnTabVal(width,height);
+	tab=returnTabVal(width,height,scale);
   p=pImage;
-  std::cout<<"p=ddd"<<(unsigned int)*p<<std::endl;
   unsigned char **t=nullptr;//tablica BGR
   t=new  unsigned char* [height];//ilość komórek  wsk bedze zależna od ilości wątków 
   unsigned char ** pStartT = t;
