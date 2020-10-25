@@ -1,13 +1,63 @@
 /** @file */
 #include "mainFunction.hpp"
+#include <cstring>
+#include <string>
 
-unsigned char * readBmp(const char * _filname,unsigned int & _w,unsigned int &  _h)
+void helpParams()
+{
+	std::cout<<"help";
+}
+
+
+bool readParams(const int _argc,char ** _argv,std::string & _inFileName, std::string & _outFileName,libMode & _lM, int &_scale)
+{
+	printf("tutaj READPARAMS");
+  if(_argc!=8)
+  {
+    return false;
+  }
+  for(int i=1;i<8;i++)
+  {
+		std::string arg =_argv[i];
+    if("-i"==arg)
+    {
+			if(i+1<8)
+      	_inFileName=_argv[i+1];
+			else 
+				return 0;
+		}
+    if("-o"==arg)
+    {
+			if(i+1<8)
+				_outFileName=_argv[i+1];
+			else 
+				return 1;
+    }
+    if("-s"==arg)
+    {
+      _scale=std::stoi(_argv[i+1]);
+			// _scale=5:	
+    }
+    if("-a"==arg)
+    {
+      _lM=libMode::libAsm;
+    }
+		if("-c"==arg)
+    {
+      _lM=libMode::libC;
+    }
+  }
+
+  return true;
+}
+
+unsigned char * readBmp(const char * _filename,unsigned int & _w,unsigned int &  _h)
 {
   unsigned char header[54];
-  FILE * pF=fopen(_filname,"rb");
+  FILE * pF=fopen(_filename,"rb");
   if(pF==nullptr)
   {
-    std::cout<<"bład w otwieraniu pliku:"<<_filname<<std::endl;
+    std::cout<<"bład w otwieraniu pliku:"<<_filename<<std::endl;
     return nullptr;
   }
    fread(header,sizeof(unsigned char),54,pF);
@@ -27,13 +77,11 @@ unsigned char * readBmp(const char * _filname,unsigned int & _w,unsigned int &  
     fclose(pF);
   return pP;
 }
-/**
-* @todo zrobic zapisa do pliku a nie na terminal 
-*/
-void writeTxt(unsigned int **tab,const unsigned int & _w,const unsigned int &  _h)
+
+void writeTxt(unsigned int **tab,const unsigned int & _w,const unsigned int &  _h,const char * _filename)
 {
   // c
-  FILE *pF = fopen("txt","w");
+  FILE *pF = fopen(_filename,"w");
    for(int i=(_h-1);i>-1;i--)
   {
 		fprintf(pF,";");
@@ -56,8 +104,7 @@ char returnChar(const unsigned int _v)
 	if	(_v<(120) && _v>=(100))		{return '%';}
 	if	(_v<(100) && _v>=(80))		{return '$';}
 	if	(_v<(80) && _v>=(40))			{return '@';}
-  else 													{return '#';} 
-  return 0; //tymaczasowo
+  return '#'; 
 }
 unsigned int ** returnTabVal(const unsigned int _w,const unsigned int _h)
 {
@@ -73,7 +120,6 @@ unsigned int ** returnTabVal(const unsigned int _w,const unsigned int _h)
     {	
 			 tab[i][j]=0;
     }
-		printf("\n");
 	}	
   return tab;
 }
