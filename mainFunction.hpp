@@ -18,10 +18,11 @@
  * @param	_outFileName
  * @param _lM
  * @param _scale
+ * @todo zrobić znacznik do watków 
  * @return true jeśli wszystkie parametry są poprawne 
  * @return false jeśli parametry są nie poprawne   
  */
-bool readParams(const int _argc, char ** _argv,std::string &  _inFileName,std::string &_outFileName,libMode & _lM,int &_scale );
+bool readParams(const int _argc, char ** _argv,std::string &  _inFileName,std::string &_outFileName,libMode & _lM,int &_scale);
 /** Tworzy tablice 2D  
  * @param _w szerokość bitmapy (w bajtach) (już wyrównanej)
  * @param _h wysokośc bitmapy 
@@ -31,9 +32,10 @@ unsigned int ** returnTabVal(const unsigned int _w,const unsigned int _h,const i
 /** zwraca wsk tablice 1D BGR 
  * @param [in,out] _w szerokość bitmapy (w bajtach) (już wyrównanej)
  * @param [in,out] _h wysokośc bitmapy 
+ * @param [in,out] _bW szerokośc bitmapy w bajtach 
  * @return wskaźnik na zaalokowaną tablicę 1D BGR... 
  */
-unsigned char * readBmp(const char * filename, unsigned int & _w,unsigned int &  _h);
+unsigned char * readBmp(const char * filename, unsigned int & _w,unsigned int &  _h,unsigned int &  _bW);
 /** zapisuje skonwertowany obraz w txt
  * @param [in,out] _w szerokość bitmapy (w bajtach) (już wyrównanej)
  * @param [in,out] _h wysokośc bitmapy 

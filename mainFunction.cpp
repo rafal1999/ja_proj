@@ -51,7 +51,7 @@ bool readParams(const int _argc,char ** _argv,std::string & _inFileName, std::st
   return true;
 }
 
-unsigned char * readBmp(const char * _filename,unsigned int & _w,unsigned int &  _h)
+unsigned char * readBmp(const char * _filename,unsigned int & _w,unsigned int &  _h,unsigned int & _bW)
 {
   unsigned char header[54];
   FILE * pF=fopen(_filename,"rb");
@@ -64,16 +64,16 @@ unsigned char * readBmp(const char * _filename,unsigned int & _w,unsigned int & 
   _w = *(int*)&header[18];
   _h = *(int*)&header[22];
 
-  _w*=3;
+  _bW=3*_w;
 
-  if(_w % 4) //wyrównanie do 4
+  if(_bW % 4) //wyrównanie do 4
   {
     std::cout<<"wyrównanie!"<<std::endl;
-    _w += 4 - (_w % 4);
+    _bW += 4 - (_bW % 4);
   }
   std::cout<<std::endl<<_w<<":"<<_h<<std::endl;
-  unsigned char *pP= new unsigned char [_w*_h];
-  fread(pP,sizeof(unsigned char),_w*_h,pF);
+  unsigned char *pP= new unsigned char [_bW*_h];
+  fread(pP,sizeof(unsigned char),_bW*_h,pF);
     fclose(pF);
   return pP;
 }
@@ -81,11 +81,13 @@ unsigned char * readBmp(const char * _filename,unsigned int & _w,unsigned int & 
 void writeTxt(unsigned int **tab,const unsigned int & _w,const unsigned int &  _h,const char * _filename,const int & _scale)
 {
   // c
+  int sizeH=std::ceil((float)_h/_scale);
+  int sizeW=std::ceil((float)_w/_scale);
   FILE *pF = fopen(_filename,"w");
-   for(int i=(_h-1);i>-1;i--)
+   for(int i=(sizeH-1);i>-1;i--)
   {
 		fprintf(pF,";");
-    for(int j=0;j<_w/(3*_scale);j++)
+    for(int j=0;j<sizeW;j++)
     {
 			fprintf(pF,"%c",returnChar(tab[i][j]));
     }
@@ -96,27 +98,29 @@ void writeTxt(unsigned int **tab,const unsigned int & _w,const unsigned int &  _
 char returnChar(const unsigned int _v)
 {
   if  (_v<=(255) && _v>=(240))	{return ' ';}
-  if  (_v<(240) && _v>=(220))		{return '\'';}
-	if	(_v<(220) && _v>=(200))		{return '*';}
-	if	(_v<(200) && _v>=(180))		{return '-';}
-	if	(_v<(180) && _v>=(160))		{return '+';}
-	if	(_v<(160) && _v>=(140))		{return '|';}
-	if	(_v<(120) && _v>=(100))		{return '%';}
-	if	(_v<(100) && _v>=(80))		{return '$';}
-	if	(_v<(80) && _v>=(40))			{return '@';}
+  else if (_v<(240) && _v>=(220))		{return '\'';}
+	else if	(_v<(220) && _v>=(200))		{return '*';}
+	else if	(_v<(200) && _v>=(180))		{return '-';}
+	else if	(_v<(180) && _v>=(160))		{return '+';}
+	else if	(_v<(160) && _v>=(140))		{return '|';}
+	else if	(_v<(120) && _v>=(100))		{return '%';}
+	else if	(_v<(100) && _v>=(80))		{return '$';}
+	else if	(_v<(80) && _v>=(40))			{return '@';}
   return '#'; 
 }
 unsigned int ** returnTabVal(const unsigned int _w,const unsigned int _h,const int &_scale)
 {
   unsigned int ** tab;
-  tab=new unsigned int *[_h];
-  for(int i=0;i<_h;i++)
+  int sizeH=std::ceil((float)_h/_scale);
+  int sizeW=std::ceil((float)_w/_scale);
+  tab=new unsigned int *[sizeH];
+  for(int i=0;i<sizeH;i++)
   {
-  	tab[i]=new unsigned int [_w/(3*_scale)];
+  	tab[i]=new unsigned int [sizeW];
   }
-		for(int i=0;i<_h;i++)
+		for(int i=0;i<(sizeH);i++)
 	{
-		for(int j=0;j<(_w/(3*_scale));j++)//bardzo ważne dzielnie przez 3 możew w przyszłosci przez 6 9 ... zaleznie ile pikseli bedę chciał połknąć 
+		for(int j=0;j<(sizeW);j++) 
     {	
 			 tab[i][j]=0;
     }

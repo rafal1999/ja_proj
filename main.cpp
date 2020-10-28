@@ -18,94 +18,43 @@ int main(int argc, char ** argv)
     std::cout<<"parametry "<<argv[i]<<std::endl;
   }
   
-  std::string outFileName;
-  std::string inFileName;
-  int txtImageWidht=100;
+  std::string outFileName="txt";
+  std::string inFileName="bitmapy/logo.bmp";
   unsigned char *pImage; 
-  unsigned char *p; 
+  unsigned int byteWidth; ///< szerokośc obrazku w bajtach (wyrównane)
   unsigned int width;
   unsigned int height;
-  unsigned int **tab;
-  int scale =1;
+  unsigned int** tabValues; ///< komurka tablicy sybolizuje jeden znak 
+  int scale =10;							///<skala w jaką ma być przeskalowany obrazek 
   libMode lM;
-  printf("\n\n-----\n");
-  // if(!readParams(argc,argv,inFileName,outFileName,lM,scale))
-  // {
-  //   std::cout<<"błędne parametry"<<std::endl;
-  //   std::cout<<"parmaetry"<<inFileName<<outFileName<<scale<<std::endl;
-  //   return 1;
-  // }
-  // std::cout<<"parmaetry"<<inFileName<<outFileName<<scale<<int(lM)<<std::endl;
-  pImage=readBmp("bitmapy/kaczor.bmp",width,height);
+  pImage=readBmp(inFileName.c_str(),width,height,byteWidth);
+  std::cout<<byteWidth<<std::endl;
   if(pImage==nullptr) 
   {
     return 1;
   }
-  std::cout<<std::endl<<width<<"--"<<height<<std::endl;
-	tab=returnTabVal(width,height,scale);
-  p=pImage;
-  unsigned char **t=nullptr;//tablica BGR
-  t=new  unsigned char* [height];//ilość komórek  wsk bedze zależna od ilości wątków 
-  unsigned char ** pStartT = t;
-	for (unsigned int i = 0; i < height; i++)
-	{
-		*t=p+(width*i);
-		t++; //ostrożnie ostanie wywołanie petli wchodzi na nie swojapamięć!!!!
-	}
-	t-=(height);  //<-dlatego tutaj nie może być height -1 !!!!
-  {//blok testowy nie otwierac 
-  // for(int i=0;i<width*height;i++) //tu tylko testowe wyświetlanie 
-  // {
-  //   printf("|%3i|",*p);
-	// 	if(i==11 ||i==23 || i==35 || i==47)
-	// 		std::cout<<std::endl;
-  //   p++;
-  // }
-	// printf("\n---------2D-------------\n");
-  // for(int i=0;i<height;i++) //tu tylko testowe wyświetlanie 
-  // {
-  //   for(int j=0;j<width;j++)
-  //   {
-  //   	printf("|%3i|",**t);
-	// 		*t+=sizeof(unsigned char);
-  //   }
-	// 	printf("\n");
-	// 	*t-=sizeof(unsigned char) * width; // wroc
-	// 	t++;
-  // }
-  // printf("\n---------2D-------------\n");
-  
-  // printf("\npokazywanie tablicy wartości testowe dogóry nogmi-----\n"); //pokazywanie tablicywartosći pamiętaj że tutaj skla może byc
-  // for(int i=(height-1);i>-1;i--)
-  // {
-  //   for(int j=0;j<width/3;j++)
-  //   {
-  //     printf("|%3i|",tab[i][j]);
-  //   }
-  //   printf("\n");
-  // }
-}
-  void (*test)(unsigned char **,unsigned int **,const unsigned int  ,const unsigned int,const int   );
+ 	tabValues=returnTabVal(width,height,scale); 
+	 
+  void (*test)(unsigned char *,unsigned int **,const unsigned int, const unsigned int, const unsigned int, const int);
    void* handle = dlopen("./libC.so", RTLD_LAZY); 
-  printf("+++++++\n"); 
   if (!handle)
   {
     std::cout<<dlerror();
     printf("handle error");
     return 1;
   }
- 
-  test=(void (*)(unsigned char **,unsigned int **,const unsigned int  ,const unsigned int,const int ))dlsym(handle,"convertPixToTabOfVal");
-  (*test)(pStartT,tab,width,height,scale);
+  test=(void (*)(unsigned char *,unsigned int **,const unsigned int  ,const unsigned int,const unsigned int,const int ))dlsym(handle,"convertPixToTabOfVal");
+  (*test)(pImage,tabValues,width,height,byteWidth,scale);
   dlclose(handle);
-  writeTxt(tab,width,height,"txt",scale); //todo 
-  { //zwalnianie pamięci 
+  writeTxt(tabValues,width,height,outFileName.c_str(),scale); 
+
   delete [] pImage;
-  delete [] pStartT;
-  for(int i=0;i<height;i++)
-    delete  [] tab[i];
-  delete [] tab;
+	for(int i=0;i<height/scale;i++)
+	{
+		delete [] tabValues[i];
+	}
+	delete [] tabValues;
   return 0;
   }
-}
+
 

@@ -1,34 +1,41 @@
 /** @file */
 #include <stdio.h>
+#include <math.h>
+/**
+ * @param _pImage wsk na początek bitmapy 
+ * @param _tavVal tablica 2 d każda wartość symbolizuje jeden znak  
+ */
 
-
-void convertPixToTabOfVal(unsigned char ** _pPix,unsigned int **_tabVal,const unsigned int  _w,const unsigned int  _h,const int  _scale) 
+void convertPixToTabOfVal(unsigned char * _pImage,unsigned int **_tabVal,const unsigned int  _width,const unsigned int  _height,const unsigned int _byteWidth,const int  _scale) 
 {
-  
-	printf("\n-----------C\n");
-  for(int i=0;i<_h;i++)
+  int n,m,index=0;
+  int sizeH=ceil((float)_height/_scale);
+  int sizeW=ceil((float)_width/_scale);
+  for (int y = 0; y < _height; y++)
   {
-    for(int j=0;j<_w/(3*_scale);j++)
+    for (int x = 0; x<_width; x++)
     {
-      for(int o=0;o<(3*_scale);o++)
-      {
-      	_tabVal[i][j]+=**_pPix;
-      	*_pPix+=sizeof(unsigned char);
-      }
-			 _tabVal[i][j]/=(3*_scale);
+      n=x/_scale;
+      m=y/_scale;
+      _tabVal[m][n]+=_pImage[3*x+_byteWidth*y];
+      _tabVal[m][n]+=_pImage[3*x+_byteWidth*y+1];
+      _tabVal[m][n]+=_pImage[3*x+_byteWidth*y+2];
+      
     }
-		_pPix++;	
   }
-  { //zakomentowany blok testowy 
-	// printf("\n------\n");
-	// for(int i=0;i<_h;i++)
-	// {
-	// 	for(int j=0;j<_w/3;j++)
-  //   {	
-	// 		 printf("|%3i|",_tabVal[i][j]);
-  //   }
-	// 	//  printf("\n");  
-	// }
-  }	
+  for (int y = 0; y < sizeH; y++)
+  {
+    for (int x = 0; x<sizeW; x++)
+    {
+      _tabVal[y][x]/=3*_scale*_scale;
+    }
+
+  }
+
   return;
 }
+
+
+
+  
+
