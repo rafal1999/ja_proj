@@ -9,8 +9,6 @@
 void convertPixToTabOfVal(unsigned char * _pImage,unsigned int **_tabVal,const unsigned int  _width,const unsigned int  _height,const unsigned int _byteWidth,const int  _scale) 
 {
   int n,m,index=0;
-  int sizeH=ceil((float)_height/_scale);
-  int sizeW=ceil((float)_width/_scale);
   for (int y = 0; y < _height; y++)
   {
     for (int x = 0; x<_width; x++)
@@ -23,7 +21,12 @@ void convertPixToTabOfVal(unsigned char * _pImage,unsigned int **_tabVal,const u
       
     }
   }
-  for (int y = 0; y < sizeH; y++)
+}
+void divideValues(unsigned int **_tabVal,const unsigned int  _width,const unsigned int  _height,const int  _scale)
+{
+  int sizeH=ceil((float)_height/_scale);
+  int sizeW=ceil((float)_width/_scale);
+   for (int y = 0; y < sizeH; y++)
   {
     for (int x = 0; x<sizeW; x++)
     {
@@ -31,10 +34,7 @@ void convertPixToTabOfVal(unsigned char * _pImage,unsigned int **_tabVal,const u
     }
 
   }
-
-  return;
 }
-
 
 
   

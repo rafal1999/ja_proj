@@ -36,6 +36,7 @@ int main(int argc, char ** argv)
  	tabValues=returnTabVal(width,height,scale); 
 	 
   void (*test)(unsigned char *,unsigned int **,const unsigned int, const unsigned int, const unsigned int, const int);
+  void (*divideValues)(unsigned int **,const unsigned int, const unsigned int, const int);
    void* handle = dlopen("./libC.so", RTLD_LAZY); 
   if (!handle)
   {
@@ -45,7 +46,11 @@ int main(int argc, char ** argv)
   }
   test=(void (*)(unsigned char *,unsigned int **,const unsigned int  ,const unsigned int,const unsigned int,const int ))dlsym(handle,"convertPixToTabOfVal");
   (*test)(pImage,tabValues,width,height,byteWidth,scale);
+
+  divideValues=(void (*)(unsigned int **,const unsigned int, const unsigned int, const int ))dlsym(handle,"divideValues");
+  (*divideValues)(tabValues,width,height,scale);
   dlclose(handle);
+
   writeTxt(tabValues,width,height,outFileName.c_str(),scale); 
 
   delete [] pImage;
