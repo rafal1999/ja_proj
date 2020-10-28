@@ -6,10 +6,10 @@
  * @param _tavVal tablica 2 d każda wartość symbolizuje jeden znak  
  */
 
-void convertPixToTabOfVal(unsigned char * _pImage,unsigned int **_tabVal,const unsigned int  _width,const unsigned int  _height,const unsigned int _byteWidth,const int  _scale) 
+void convertPixToTabOfVal(unsigned char * _pImage,unsigned int **_tabVal,const unsigned int  _width,const unsigned int  _startHeight,const unsigned int _stopHeight ,const unsigned int _byteWidth,const int  _scale) 
 {
   int n,m,index=0;
-  for (int y = 0; y < _height; y++)
+  for (int y = _startHeight; y < _stopHeight; y++)
   {
     for (int x = 0; x<_width; x++)
     {

@@ -108,19 +108,18 @@ char returnChar(const unsigned int _v)
 	else if	(_v<(80) && _v>=(40))			{return '@';}
   return '#'; 
 }
-unsigned int ** returnTabVal(const unsigned int _w,const unsigned int _h,const int &_scale)
+unsigned int ** returnTabVal(const unsigned int _sizeW,const unsigned int _sizeH,const int &_scale)
 {
   unsigned int ** tab;
-  int sizeH=std::ceil((float)_h/_scale);
-  int sizeW=std::ceil((float)_w/_scale);
-  tab=new unsigned int *[sizeH];
-  for(int i=0;i<sizeH;i++)
+  
+  tab=new unsigned int *[_sizeH];
+  for(int i=0;i<_sizeH;i++)
   {
-  	tab[i]=new unsigned int [sizeW];
+  	tab[i]=new unsigned int [_sizeW];
   }
-		for(int i=0;i<(sizeH);i++)
+		for(int i=0;i<(_sizeH);i++)
 	{
-		for(int j=0;j<(sizeW);j++) 
+		for(int j=0;j<(_sizeW);j++) 
     {	
 			 tab[i][j]=0;
     }
