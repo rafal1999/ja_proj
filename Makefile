@@ -17,9 +17,9 @@ v : all  #leak test
 	valgrind ./main
 
 main :   libasm.so libC.so mainFunction.o main.o 
-	$(kompilatorCPP) $(standard) $(debug) $(optymalizacja)   $(errors) -m64  -L. -l:libasm.so -l:libC.so -I. -o main mainFunction.o  main.o -ldl #<- musi być na końcu tak jak SFML   
+	$(kompilatorCPP) $(standard) $(debug) $(optymalizacja)   $(errors) -pthread -m64  -L. -l:libasm.so -l:libC.so -I. -o main mainFunction.o  main.o -ldl #<- musi być na końcu tak jak SFML   
 main.o : main.cpp
-	$(kompilatorCPP) $(standard) $(debug) $(optymalizacja) $(errors)  -c -o $@ $^ 
+	$(kompilatorCPP) $(standard) $(debug) $(optymalizacja) $(errors) -pthread  -c -o $@ $^ 
 mainFunction.o : mainFunction.cpp
 	$(kompilatorCPP) $(standard) $(debug) $(optymalizacja) $(errors)  -c -o $@ $^
 

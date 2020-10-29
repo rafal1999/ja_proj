@@ -9,34 +9,45 @@ void helpParams()
 }
 
 
-bool readParams(const int _argc,char ** _argv,std::string & _inFileName, std::string & _outFileName,libMode & _lM, int &_scale)
+bool readParams(const int _argc,char ** _argv,std::string & _inFileName, std::string & _outFileName,libMode & _lM, int &_scale,int & _threadNumber)
 {
-	printf("tutaj READPARAMS");
-  if(_argc!=8)
+  
+  const int paramsNumber=10;
+	printf("tutaj READPARAMS %d %d",_argc);
+  if(_argc!=paramsNumber)
   {
     return false;
   }
-  for(int i=1;i<8;i++)
+  for(int i=1;i<paramsNumber;i++)
   {
 		std::string arg =_argv[i];
     if("-i"==arg)
     {
-			if(i+1<8)
+			if(i+1<paramsNumber)
       	_inFileName=_argv[i+1];
 			else 
 				return 0;
 		}
     if("-o"==arg)
     {
-			if(i+1<8)
+			if(i+1<paramsNumber)
 				_outFileName=_argv[i+1];
+			else 
+				return 1;
+    }
+    if("-t"==arg)
+    {
+			if(i+1<paramsNumber)
+				_threadNumber=std::stoi(_argv[i+1]);
 			else 
 				return 1;
     }
     if("-s"==arg)
     {
-      _scale=std::stoi(_argv[i+1]);
-			// _scale=5:	
+      if(i+1<paramsNumber)
+        _scale=std::stoi(_argv[i+1]);
+      else 
+        return 1;
     }
     if("-a"==arg)
     {
@@ -55,6 +66,7 @@ unsigned char * readBmp(const char * _filename,unsigned int & _w,unsigned int & 
 {
   unsigned char header[54];
   FILE * pF=fopen(_filename,"rb");
+  
   if(pF==nullptr)
   {
     std::cout<<"bład w otwieraniu pliku:"<<_filename<<std::endl;
@@ -89,6 +101,7 @@ void writeTxt(unsigned int **tab,const unsigned int & _w,const unsigned int &  _
 		fprintf(pF,";");
     for(int j=0;j<sizeW;j++)
     {
+      tab[i][j]/=3*_scale*_scale;//podzielnie aby wartość była z przedziału [0,255]
 			fprintf(pF,"%c",returnChar(tab[i][j]));
     }
     fprintf(pF,";\n");
