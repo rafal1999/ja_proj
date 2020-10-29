@@ -13,7 +13,6 @@ bool readParams(const int _argc,char ** _argv,std::string & _inFileName, std::st
 {
   
   const int paramsNumber=10;
-	printf("tutaj READPARAMS %d %d",_argc);
   if(_argc!=paramsNumber)
   {
     return false;
@@ -121,18 +120,19 @@ char returnChar(const unsigned int _v)
 	else if	(_v<(80) && _v>=(40))			{return '@';}
   return '#'; 
 }
-unsigned int ** returnTabVal(const unsigned int _sizeW,const unsigned int _sizeH,const int &_scale)
+unsigned int ** returnTabVal(const unsigned int _width,const unsigned int _height,const int &_scale)
 {
   unsigned int ** tab;
-  
-  tab=new unsigned int *[_sizeH];
-  for(int i=0;i<_sizeH;i++)
+  unsigned int sizeH=std::ceil((float)_height/_scale);
+  unsigned int sizeW=std::ceil((float)_width/_scale);
+  tab=new unsigned int *[sizeH];
+  for(unsigned int i=0;i<sizeH;i++)
   {
-  	tab[i]=new unsigned int [_sizeW];
+  	tab[i]=new unsigned int [sizeW];
   }
-		for(int i=0;i<(_sizeH);i++)
+		for(int unsigned i=0;i<(sizeH);i++)
 	{
-		for(int j=0;j<(_sizeW);j++) 
+		for(int unsigned j=0;j<(sizeW);j++) 
     {	
 			 tab[i][j]=0;
     }

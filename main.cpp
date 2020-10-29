@@ -41,9 +41,8 @@ int main(int argc, char ** argv)
   {
     return 1;
   }
-  unsigned int sizeH=std::ceil((float)height/scale);
-  unsigned int sizeW=std::ceil((float)width/scale);
- 	tabValues=returnTabVal(sizeW,sizeH,scale); 
+  
+ 	tabValues=returnTabVal(width,height,scale); 
 	 
  
   if(lM==libMode::libC)
@@ -84,7 +83,7 @@ int main(int argc, char ** argv)
   std::cout << "czas wykonania: "<< duration.count()<<" ms"<< std::endl; 
 
   delete [] pImage;
-	for(unsigned int i=0;i<sizeH;i++)
+	for(unsigned int i=0;i<std::ceil((float)height/scale);i++)
 	{
 		delete [] tabValues[i];
 	}
