@@ -1,0 +1,5 @@
+*.s
+bitmapy/
+.vscode
+txt
+convert2txt

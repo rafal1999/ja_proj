@@ -1,11 +1,15 @@
-/** @file */
 #include "mainFunction.hpp"
 #include <cstring>
 #include <string>
 
 void helpParams()
 {
-	std::cout<<"help";
+	std::cout<<"błędne parametry"<<std::endl;
+  std::cout<<"-i <nawa_pliku_we>"<<std::endl;
+  std::cout<<"-o <nawa_pliku_wy>"<<std::endl;
+  std::cout<<"-s <wartość skali>"<<std::endl;
+  std::cout<<"-t <liczba_wątków>"<<std::endl;
+  std::cout<<"-a/-c wybór bilioteki asm/C"<<std::endl;
 }
 
 
@@ -37,14 +41,22 @@ bool readParams(const int _argc,char ** _argv,std::string & _inFileName, std::st
     if("-t"==arg)
     {
 			if(i+1<paramsNumber)
+      {
 				_threadNumber=std::stoi(_argv[i+1]);
-			else 
+         if(_threadNumber<=0)
+          return false;
+      }
+      else 
 				return 1;
     }
     if("-s"==arg)
     {
       if(i+1<paramsNumber)
+      {
         _scale=std::stoi(_argv[i+1]);
+        if(_scale<=0)
+          return false;
+      }
       else 
         return 1;
     }
@@ -100,7 +112,7 @@ void writeTxt(unsigned int **tab,const unsigned int & _w,const unsigned int &  _
 		fprintf(pF,";");
     for(int j=0;j<sizeW;j++)
     {
-      tab[i][j]/=3*_scale*_scale;//podzielnie aby wartość była z przedziału [0,255]
+    
 			fprintf(pF,"%c",returnChar(tab[i][j]));
     }
     fprintf(pF,";\n");

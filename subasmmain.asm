@@ -1,150 +1,153 @@
 CPU x64
 DEFAULT REL 
 
-
-
 SECTION .data
-height: dd  10
-width:  dd  10
-scale:   dq  2 
-byteWidh: dq 0
+test: dd 3F80H ;zakraglanie do -inf
+
 SECTION .text
 
-global convert
-global srednia_xmm
+global convert_asm
+global average_asm
 
 
 
 
-	; al zajęty 
-; rdi pImage 
-; rsi wsk na wsk 
-; rbx *tabVal wsk na wiersz
-; rdx height zajęte przez pętle 
-; rcx width zajęte przez pętle 
-; r9 scale na rzie to jest pomoc do bytewuith *y 
-;	r8 bytewidth 
-; r10 n ale tymacz pomocnicze przy liczeniu adresu    
-; r11 m
-;	r12 n
-convert:
-	mov [byteWidh],r8
-	mov r8,rdx
-	
+
+; rdi pImage - wskaźnik na tablice RGBRGBRGB...
+; rsi tabValues - tablica wartości (2D wsk na wsk)
+; rdx bytewidth - szerokość wiersza w poj. wartościach RGB
+; rcx width - szerokość obrazka   (długość jednego wiersza) 
+;	r8 - do której komórki (pImage) jest wykonywane przetwarzanie 
+; r9 scale - skala
+; 7 argument na stosie - od której komórki (pImage) jest rozpoczęte przetwarzanie
+
+convert_asm:
+	mov r10,rdx  											 ;w r10 bytewidth
 	xor rdx,rdx
 	mov rdx,[rsp+8]
-	push	rsi
 	push rbx
-	push r12
 	xor rax,rax
-	mov [width],ecx
-	mov [scale],r9
-	xor rcx,rcx
+	push r12
+	push r10	
 row:
-	xor rcx,rcx
-	mov rax,[byteWidh]; w rax byteWidh
-	push rdx ; to jest y
-	mul rdx ;mul trzba uważać bo wynik jest współdzielony z rdx  
-	mov r9 ,rax ; w r9 bytewidth * y 
+	pop r10
+	push rdx ; y
+	mov rax,r10													;w rax byteWidh
+	mul rdx															;byteWidth * y 
+	mov r11 ,rax 												;w r11 bytewidth * y 
+	pop rdx ; y
 	xor rax,rax 
-	pop rdx ; przywracanie po mnozeniu 
-	mov rax,rdx ;y do rax 	
-	push rdx 
+	push r10
+	mov rax,rdx 												;y do rax 	
+	push r11
+	push rdx 														;y
 	xor rdx,rdx
-	div qword [scale] ;y/scale 
-	mov r11,rax
-	mov rbx, [rsi+(r11*8)]; w rbx adres wiersza
-	pop rdx 
-	col:
-		mov rax,rcx ; x do rax 
-		push rdx ; zapisanie rdx na stos bo współdzieli przy mnożeniu z rax 
-		xor rdx,rdx
-		div qword [scale]  ; y/scale 
-		mov r12,rax ; w r12 jest n=x/scale 
-		xor rdx,rdx
-		mov rax,rcx
-		mov rdx , 3  
-		mul rdx	; 3 * x
-		pop rdx
-		xor r10,r10	
-		mov r10,rax ;  3*x 
-		add r10,r9 ; (3*x)+(_byteWidth*y)
-		xor rax, rax 
-		mov al, byte [rdi+r10]; w al jeden bajt
-		add DWORD  [rbx+(r12*4)] , eax
-		mov al, byte [rdi+r10+1] ; 
-		add DWORD	 [rbx+(r12*4)] , eax
-		mov al, byte [rdi +r10 +2]
-		add DWORD	 [rbx+(r12*4)] , eax ; dodanie bajtu
-		;add rbx, 4 ; o 4 bajty tyle ile ma int 
-		; add rdi, 3 ; przesuniecie na kojnego piksela o (czyli o 3 bajty )
-		inc rcx
-		cmp ecx,[width]
-		jne col 
-	; pop rcx ; włozenie do rcx początkowej wartości wierszy 
-	; add rsi, 8 ;na kolejny wiersz tablicy przesuniecie 
-	inc  rdx ;inkrementacja 
-	cmp edx,r8d
+	div r9 															;y/scale 
+	pop rdx
+	mov r11,rax 												;w r11 y/scale 
+	mov rbx, [rsi+(r11*8)] 							;w rbx adres wiersza tabVal
+	pop r11
+	push r8															; wrzucenie na stos wysokości obrazka
+	mov r8, rcx													;w r8 szerokość obrazka
+	xor rcx,rcx
+col:
+	push rdx		
+	mov rax,rcx 												;x do rax 											
+	xor rdx,rdx
+	div r9					  									;x/scale 
+	mov r12,rax 												;w r12 jest n=x/scale 
+	xor rdx,rdx
+	mov rax,rcx
+	mov rdx , 3  
+	xor r10,r10	
+	mul rdx															;3 * x
+	pop rdx
+	mov r10,rax 												;w r10  3*x 
+	xor rax, rax 
+	add r10,r11 												;(3*x)+(_byteWidth*y)
+	mov al, byte [rdi+r10]							;w al jeden bajt pImage
+	add DWORD  [rbx+(r12*4)] , eax
+	mov al, byte [rdi+r10+1] 
+	add DWORD	 [rbx+(r12*4)] , eax
+	mov al, byte [rdi +r10 +2]
+	add DWORD	 [rbx+(r12*4)] , eax 
+	inc rcx
+	cmp rcx,r8
+	jne col 
+	pop r8 															   															
+	inc  rdx 														
+	cmp rdx,r8
 	jne row
 	pop r12 
 	pop rbx
-	pop rsi
+	pop r10
 	ret
 
-		srednia_xmm:
-	push rdx
+;rdi **tabValues - tablica wartości 
+;rsi numer ostatniego wiersza który będze przetwarzany  
+;rdx widthTabVal - szerokośc tablicy wartości 
+;rcx scale - skala 
+;r8 numer od którego algorytm rozpoczyna przedtwarzanie 
+average_asm:
+	push rdx 							;zapisanie wartości przed mnożeniem i dzieleniem 
 	xor rax,rax
 	xor rdx,rdx
-	mov rax,3 ; 3*scale*scale 
-	mul rcx   ;
-	mul rcx   ;
-	cvtsi2ss xmm1, rax ; 
+	mov rax,3 						; 3*scale*scale 
+	mul rcx   						;
+	mul rcx   						;
+	cvtsi2ss xmm1, rax 		;w xmm1  3*scale*scale (w 1 komórce v4_int32)
 	xor r9,r9
-	shufps xmm1,xmm1, 0h
-	mov r9, 4
-	xor rax,rax
-	mov rax,8; liczy pierwszy adres wersza 
+	shufps xmm1,xmm1, 0h	;w v4_int32 są wartość 3*scale*scale
+	mov r9, 4 						;w r9 ile danych będzie przetwarzanych równocześnie 
+ 	xor rax,rax
+	mov rax,8							;liczy pierwszy adres wersza 
 	mul r8;
-	sub rsi, r8
-	add rdi,rax;
-	pop rdx
+	sub rsi, r8						;w rsi liczba iteracji 
+	add rdi,rax 					;przesunięcie adresu na odpowiedni wiersz 
+	pop rdx 							;odzyskanie tabValues wartości po wykonaniu dzielenia 
 	xor rax,rax
-	mov rax, rdx
+	mov rax, rdx 					;w rax widthTabVal
 	xor rdx,rdx
-	div r9
-	r:
-		mov r9, [rdi]
-		push rdx
-		push rax
-	c:
-		cvtdq2ps xmm0, [r9] ; w xmm0 4 komórki 
-		divps xmm0,xmm1
-		cvtps2dq xmm0,xmm0
-		movaps  [r9],xmm0
-		add r9, 4*4
-		dec rax
-		cmp rax,0
-		jne c
-		cmp rdx,0
-		je rc
-		e1:
-		cvtsi2ss xmm0,[r9]
-		xor r11,r11
-		divps xmm0,xmm1
-		cvtss2si r11,xmm0
-		mov DWORD [r9], r11d
-		dec rdx
-		add r9, 4 ; o 1 int presówam 
-		cmp rdx,0
-		jne e1
-		rc:
-		cmp rsi,0
-		pop rax
-		pop rdx
-		je end
-		dec rsi
-		add rdi,8 ; na koleny wiersz 
-		cmp rsi,0
-		jne r
-		end:
-		ret
+	div r9 								;ile razy można  pobrać 4  dane za jednym razem, 
+												;w rdx ile komórek będze trzeba oblczyć pojedynczo 
+	xor r9,r9
+r: ; row
+	mov r9, [rdi] 				;w r9 adres wiersza 
+	push rdx
+	push rax 							;w rax ile razy mozna pobrać 4 komórki za jednym razem 
+c: ;col
+	cvtdq2ps xmm0, [r9] 	;w xmm0 4 komórki 
+	divps xmm0,xmm1
+	cvtps2dq xmm0,xmm0		;konwersja na int 
+	movaps  [r9],xmm0 		;załadowanie podzielonych danych 
+	add r9, 4*4 					;przejście na kolejne 4 komórki 
+	dec rax
+	cmp rax,0
+	jne c
+	cmp rdx,0 
+	je rc 					  		;skok jesli nie trzeba rozpatrywać przypadku gdy 
+												;liczba komórek jest niepodzielna przez 4
+e1: 										;obliczanie ostanich (pozostałych) 3,2, lub 1 komórek/komórki  
+	cvtsi2ss xmm0,[r9] 
+	xor r11,r11
+	divps xmm0,xmm1
+	cvtss2si r11,xmm0
+	mov DWORD [r9], r11d
+	dec rdx
+	add r9, 4 					 
+	cmp rdx,0
+	jne e1
+rc:											;gdy nie trzeba rozpatrywać przypadku gdy 
+												;liczba  jest niepodzielna przez 4 komórek   
+	cmp rsi,0
+	pop rax
+	pop rdx
+	je end
+	dec rsi
+	add rdi,8 						;przejście  na koleny wiersz 
+	cmp rsi,0
+	jne r
+end:
+	ret
+
+	
